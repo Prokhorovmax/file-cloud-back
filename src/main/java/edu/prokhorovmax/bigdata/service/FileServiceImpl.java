@@ -63,7 +63,11 @@ public class FileServiceImpl implements FileService {
 
     @PostConstruct
     private void updatePointers() {
-        String storagePath = Paths.get(".").toAbsolutePath().getParent() + "\\" + baseStorageDir + "\\";
+        String storagePath = Paths.get(".").toAbsolutePath().getParent() + "/" + baseStorageDir;
+        if (!Files.exists(Paths.get(storagePath))) {
+            new java.io.File(storagePath).mkdirs();
+        }
+        storagePath += '/';
         java.io.File dir = new java.io.File(storagePath);
         java.io.File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
@@ -202,6 +206,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void uploadFile(MultipartFile file) {
+        logger.info("Upload file request");
         byte[] bytes = null;
         try {
             bytes = file.getBytes();
@@ -218,7 +223,7 @@ public class FileServiceImpl implements FileService {
             // размер сегмента
             int segmentSize = baseSegmentSize;
             // путь для сохранения сегментов
-            String storagePath = Paths.get(".").toAbsolutePath().getParent() + "\\" + baseStorageDir + "\\";
+            String storagePath = Paths.get(".").toAbsolutePath().getParent() + "/" + baseStorageDir + "/";
             // максимальный размер файлов хранилища сегментов
             int maxStorageFileSize = baseMaxStorageFileSize;
 
